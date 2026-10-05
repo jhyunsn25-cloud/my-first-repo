@@ -84,6 +84,8 @@ audio:
   bgm_db: -20                # 나레이션 대비 BGM 볼륨
   duck: true                 # 나레이션이 나올 때 BGM 자동 감쇄
   loudness: -14              # 최종 LUFS (YouTube 기준)
+  sfx_db: -8                 # 효과음 기본 볼륨(dB). 개별 지정은 sfx 항목의 db
+  sfx_on_enter: null         # 모든 화면 요소 등장 때 자동 재생할 효과음 (예: lib:sfx/pop.wav). null 이면 끔
 
 thumbnail:
   size: [1280, 720]

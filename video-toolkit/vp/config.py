@@ -7,6 +7,23 @@ import yaml
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PRESET_PATH = os.path.join(ROOT, "config", "preset.yaml")
+LIB = os.path.join(ROOT, "assets")          # 프로젝트 공용 자산(효과음 등). 경로에 lib: 접두어로 참조
+
+
+def load_dotenv(path=os.path.join(ROOT, ".env")):
+    """video-toolkit/.env 의 KEY=VALUE 를 환경변수로 (이미 설정된 값은 유지). .env 는 git 에 올리지 않는다."""
+    if not os.path.exists(path):
+        return
+    with open(path, encoding="utf-8-sig") as f:
+        for line in f:
+            line = line.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            k, v = line.split("=", 1)
+            os.environ.setdefault(k.strip(), v.strip().strip('"').strip("'"))
+
+
+load_dotenv()
 
 
 def deep_merge(base, over):
@@ -41,6 +58,8 @@ class Project:
     def path(self, rel):
         if rel is None:
             return None
+        if rel.startswith("lib:"):
+            return os.path.join(LIB, rel[4:])
         return rel if os.path.isabs(rel) else os.path.join(self.dir, rel)
 
     def font(self, key):

@@ -9,6 +9,8 @@
   python make.py all       <프로젝트폴더> [--preview] [--allow-unverified]
   python make.py voices    [--gender female|male] [--model ssfm-v30]   # 타입캐스트 보이스 목록
   python make.py typecast-info                                     # 타입캐스트 플랜·잔여 크레딧
+  python make.py sfx-import <zip경로>                              # 효과음 zip → assets/sfx/ (공용)
+  python make.py sfx-list                                          # 공용 효과음 목록과 길이
 """
 import argparse
 import os
@@ -56,8 +58,13 @@ def do_render(p, preview):
     audio = do_tts(p)
     narr = os.path.join(p.out, "narration.wav")
     _, total = A.concat_narration(audio, p.cfg["video"]["scene_pad"], narr)
+    timeline, _, _ = R.build_timeline(p, audio)
+    events = A.sfx_events(p, timeline)
+    if events:
+        print(f"■ 효과음 {len(events)}개 배치")
+    voice = A.add_sfx(narr, events, os.path.join(p.out, "narration_sfx.wav"))
     mixed = os.path.join(p.out, "mix.wav")
-    A.mix(narr, total, p.cfg, p.path(p.cfg["audio"].get("bgm")), mixed)
+    A.mix(voice, total, p.cfg, p.path(p.cfg["audio"].get("bgm")), mixed)
     out = os.path.join(p.out, "preview.mp4" if preview else "video.mp4")
     print(f"■ 렌더 → {out}")
     t0 = time.time()
@@ -70,7 +77,8 @@ def do_render(p, preview):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("cmd", choices=["check", "tts", "render", "thumb", "publish", "all", "voices", "typecast-info"])
+    ap.add_argument("cmd", choices=["check", "tts", "render", "thumb", "publish", "all", "voices", "typecast-info",
+                                       "sfx-import", "sfx-list"])
     ap.add_argument("project", nargs="?")
     ap.add_argument("--gender", choices=["female", "male"])
     ap.add_argument("--model", default="ssfm-v30")
@@ -89,6 +97,23 @@ def main():
         c = info.get("credits", {})
         print(f"플랜: {info.get('plan')}  크레딧: {c.get('used_credits')}/{c.get('plan_credits')} 사용  "
               f"동시요청 한도: {info.get('limits', {}).get('concurrency_limit')}")
+        return
+    if a.cmd in ("sfx-import", "sfx-list"):
+        from vp.config import LIB
+        dest = os.path.join(LIB, "sfx")
+        if a.cmd == "sfx-import":
+            if not a.project or not os.path.exists(a.project):
+                ap.error("zip 경로를 지정하세요. 예: python make.py sfx-import ~/Desktop/효과음.zip")
+            files = A.import_pack(a.project, dest)
+            print(f"■ {len(files)}개 → {dest}")
+        files = sorted(os.path.relpath(os.path.join(r, f), dest).replace(os.sep, "/")
+                       for r, _, fs in os.walk(dest) for f in fs if f.lower().endswith(A.AUDIO_EXT))
+        for f in files:
+            print(f"  lib:sfx/{f}  ({TTS.ffprobe_duration(os.path.join(dest, f)):.2f}초)")
+        if not files:
+            print("  (없음) → python make.py sfx-import <zip경로>")
+        else:
+            print("※ 효과음 팩의 라이선스(상업 이용·재배포 금지 여부)를 확인하고, 이 폴더는 git 에 올리지 마세요.")
         return
     if not a.project:
         ap.error("프로젝트 폴더를 지정하세요")

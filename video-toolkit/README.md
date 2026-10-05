@@ -94,9 +94,12 @@ overrides:
 ### 타입캐스트
 1. API 키 발급: https://typecast.ai/developers/api
    웹 편집기 구독과 API 이용(크레딧·요금)이 같은 플랜에 묶이는지는 계정마다 다를 수 있습니다. 아래 `typecast-info`로 확인하세요.
-2. 키 등록
-   - macOS·Linux: `export TYPECAST_API_KEY=발급받은키`
-   - Windows: `set TYPECAST_API_KEY=발급받은키`
+2. 키 등록: `video-toolkit/.env.example`을 복사해 `.env` 파일을 만들고, 아래 한 줄에 키를 붙여 넣습니다.
+   ```
+   TYPECAST_API_KEY=여기에_키
+   ```
+   - `.env`는 `.gitignore`에 들어 있어 GitHub에 올라가지 않습니다. 이 저장소는 **공개(public)** 이므로 키를 코드·`project.yaml`·커밋 메시지 어디에도 적지 마세요.
+   - 환경변수로 넣어도 됩니다: macOS·Linux는 `export TYPECAST_API_KEY=...`, Windows는 `set TYPECAST_API_KEY=...`
 3. 플랜과 크레딧 확인: `python make.py typecast-info`
 4. 보이스 찾기: `python make.py voices --gender female` (`tc_...` ID가 출력됩니다. 내 커스텀 보이스는 `uc_...`)
 5. `project.yaml`에 다음을 적습니다.
@@ -139,6 +142,23 @@ overrides:
 
 - 권장: 가사 없는 로파이·미니멀 비트, BPM 85~110, 3분 이상 루프 가능한 곡
 - 음량은 자동 처리됩니다: 배경음악 −20dB, 나레이션 구간 덕킹, 최종 −14 LUFS
+
+### 효과음
+```bash
+python make.py sfx-import ~/Desktop/효과음.zip      # Windows: python make.py sfx-import %USERPROFILE%\Desktop\효과음.zip
+python make.py sfx-list                            # lib:sfx/... 경로와 길이 출력
+```
+- 압축을 풀면 `video-toolkit/assets/sfx/`(공용 폴더, git 제외)에 저장됩니다. 윈도우에서 만든 zip의 한글 파일명도 자동으로 복원됩니다.
+- `project.yaml`에서 쓰는 방법
+  ```yaml
+  - id: s02
+    sfx: [{src: "lib:sfx/전환/휙.mp3", at: 0.0, db: -10}]       # 장면 기준 시각(초)
+    visuals:
+      - {type: number, value: 4500, sfx: "lib:sfx/팝.wav"}        # 요소가 등장할 때 재생
+  ```
+- 모든 요소 등장에 같은 소리를 넣으려면 `audio.sfx_on_enter: lib:sfx/팝.wav`를 설정하세요. 기본 볼륨은 `audio.sfx_db: -8`입니다.
+- 효과음은 섹션 전환과 핵심 숫자에만 쓰고, 한 장면에 1~2개로 제한하세요. 남발하면 나레이션이 묻힙니다.
+- 효과음 팩의 라이선스(상업 이용, 재배포 금지)를 확인하고 `licenses.csv`에 기록하세요. 팩 파일은 공개 저장소에 올리지 않습니다.
 
 ## 8. 폴더 구조
 

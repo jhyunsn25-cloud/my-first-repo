@@ -52,6 +52,9 @@ def run(project, allow_unverified=False):
                     errors.append(f"[{sid}] 파일 없음: {p}")
                 elif os.path.relpath(project.path(p), project.path("assets")).replace("\\", "/") not in lic:
                     warns.append(f"[{sid}] assets/licenses.csv 에 라이선스 기록 없음: {p}")
+        for x in sc.get("sfx", []) + [{"src": v["sfx"]} for v in sc.get("visuals", []) if v.get("sfx")]:
+            if not os.path.exists(project.path(x["src"])):
+                errors.append(f"[{sid}] 효과음 파일 없음: {x['src']}  (python make.py sfx-list 로 확인)")
         if len(sc.get("visuals", [])) > 3:
             warns.append(f"[{sid}] 한 장면 요소 {len(sc['visuals'])}개 — 3개 이하 권장")
         ats = sorted(float(v.get("at", 0.2)) for v in sc.get("visuals", []))

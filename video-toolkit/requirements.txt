@@ -1,0 +1,7 @@
+pillow>=10.0
+pyyaml>=6.0
+numpy>=1.24
+edge-tts>=6.1        # 기본 TTS (무료, 개인·테스트용 — 상업 이용 전 약관 확인)
+rembg[cpu]>=2.0.50   # 썸네일 누끼(배경 제거)
+# 선택: Google Cloud TTS를 쓸 때만
+# google-cloud-texttospeech>=2.16

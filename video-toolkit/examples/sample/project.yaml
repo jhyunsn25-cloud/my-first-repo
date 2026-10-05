@@ -1,0 +1,82 @@
+# 샘플: 구조 시연용. 수치는 모두 [예시]이며 사실이 아님 → check 에서 'verified 아님' 오류가 나는 것이 정상.
+meta:
+  title: "커피 한 잔 4,500원, 원두값은 얼마일까?"
+  format: explainer          # bundle | explainer | info | interview
+  aspect: "16:9"             # "16:9" | "9:16"
+  basis_date: "2026-10-05"
+  summary:
+    - "커피 한 잔 가격이 어떻게 구성되는지 예시 수치로 정리했습니다."
+    - "(샘플 프로젝트 — 수치는 실제 통계가 아닙니다)"
+  hashtags: [커피, 물가, 경제상식]
+  sponsored: null
+
+overrides:
+  channel: {name: "MYCHANNEL"}
+  tts: {provider: silent}    # 실제 제작 시 edge / google / file 로 변경
+  audio: {bgm: null}         # 예: assets/music/calm_beat.mp3 (licenses.csv 에 기록 필수)
+
+scenes:
+  - id: s01
+    chapter: "오프닝"
+    narration: "아침마다 사 마시는 커피 한 잔, 그 안에 원두값은 얼마나 들어 있을까요? 결론부터 말하면 생각보다 *훨씬 적습니다*."
+    bg: {src: assets/bg_cafe.jpg, kenburns: in}
+    visuals:
+      - {type: title, text: "커피 한 잔\n*원두값*은 얼마?", sub: "예시로 보는 가격 구조", at: 0.3}
+
+  - id: s02
+    chapter: "가격 구성"
+    narration: "예시로 한 잔 가격을 *4,500원*이라고 해 볼게요. 이 가운데 원두값은 약 *400원*입니다."
+    claims: [C1, C2]
+    bg: {color: ink}
+    visuals:
+      - {type: number, value: 4500, suffix: "원", label: "한 잔 가격 [예시]", at: 0.2, until: 3.2}
+      - {type: number, value: 400, suffix: "원", label: "그중 원두값 [예시]", at: 3.4}
+    source: "예시 수치 (샘플)"
+
+  - id: s03
+    chapter: "가격 구성"
+    narration: "나머지는 임대료와 인건비, 컵과 우유 같은 부자재, 그리고 남는 돈으로 나뉩니다. 비중이 가장 큰 건 *임대료*예요."
+    claims: [C3]
+    bg: {color: ink}
+    visuals:
+      - type: bars
+        unit: "원"
+        highlight: 0
+        items:
+          - {label: "임대료", value: 1500}
+          - {label: "인건비", value: 1200}
+          - {label: "부자재", value: 700}
+          - {label: "원두", value: 400}
+          - {label: "남는 돈", value: 700}
+    source: "예시 수치 (샘플)"
+
+  - id: s04
+    chapter: "원두가 오면"
+    narration: "그렇다면 원두는 어떤 길을 거쳐 올까요? 산지 농장에서 수출업체, 수입업체, 로스터리를 지나 매장에 도착합니다."
+    bg: {src: assets/bg_farm.jpg, kenburns: out}
+    visuals:
+      - {type: flow, steps: ["산지 농장", "수출·수입", "로스터리", "매장"], at: 1.8}
+
+  - id: s05
+    chapter: "원두가 오면"
+    narration: "원두 가격이 오르면 커피값도 바로 오를까요? 보도들을 보면 원두값 비중이 작아서 *바로 같은 폭으로* 오르지는 않는다고 해요."
+    claims: [C4]
+    bg: {src: assets/bg_city.jpg, kenburns: in}
+    visuals:
+      - {type: headline, text: "원두값 비중 작아 판매가 인상 폭은 제한적 (요약 예시)", highlight: "인상 폭은 제한적", source: "예시 출처 (샘플)", x: 0.36, width: 0.62, at: 0.4}
+      - {type: cutout, src: assets/cup.jpg, side: right, height: 0.85, at: 0.8}
+
+  - id: s06
+    chapter: "정리"
+    narration: "정리하면, 커피값은 원두보다 *매장을 운영하는 비용*이 좌우합니다. 여러분이 마시는 커피는 어떤 값이 가장 클 것 같나요?"
+    bg: {src: assets/bg_shop.jpg, kenburns: none}
+    visuals:
+      - {type: compare, left: {label: "원두", value: "약 9%"}, right: {label: "운영비", value: "약 60%"}, at: 0.3}
+    claims: [C3]
+
+thumbnail:
+  backgrounds: [assets/bg_cafe.jpg, assets/bg_farm.jpg]   # 1장=단일, 2~4장=콜라주
+  subjects:                                               # 주요 인물·피사체: 배경 제거(누끼) 후 합성
+    - {src: assets/cup.jpg, x: 0.78, y: 1.0, height: 0.8}
+  label: null                                             # 대담형 코너명 등
+  lines: ["커피값 4,500원", "원두값은 얼마?"]          # 1줄 흰색, 2줄 강조색

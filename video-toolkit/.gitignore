@@ -1,0 +1,6 @@
+fonts/
+**/out/
+__pycache__/
+*.pyc
+examples/sample/assets/*.jpg
+examples/sample/assets/*.png

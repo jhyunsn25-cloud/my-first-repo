@@ -1,0 +1,5 @@
+claim_id,claim,kind,publisher,title,date,url,second_source,accessed,checked_by,status,note
+C1,한 잔 가격 4500원,number,(예시),(샘플 — 실제 출처로 교체),2026-10-05,https://example.com/c1,,2026-10-05,,example,샘플 수치
+C2,원두값 약 400원,number,(예시),(샘플 — 실제 출처로 교체),2026-10-05,https://example.com/c2,,2026-10-05,,example,샘플 수치
+C3,비용 구성 비중,number,(예시),(샘플 — 실제 출처로 교체),2026-10-05,https://example.com/c3,,2026-10-05,,example,샘플 수치
+C4,원두값 비중이 작아 판매가 인상폭 제한,quote,(예시),(샘플 — 실제 출처로 교체),2026-10-05,https://example.com/c4,,2026-10-05,,example,샘플 문장

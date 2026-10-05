@@ -1,0 +1,91 @@
+# video-preset 기본 설정. 프로젝트별 변경은 project.yaml 의 overrides: 에 같은 키로 덮어쓴다.
+channel:
+  name: "MYCHANNEL"          # 자체 채널명 (원본 채널명·층수 모티프 사용 금지)
+  logo: null                 # 자체 로고 PNG 경로(투명 배경). null 이면 채널명 텍스트 배지
+  title_suffix: true         # 제목 끝에 " / 채널명" 붙임 (해설·생활정보·대담형)
+
+video:
+  fps: 30
+  sizes:
+    "16:9": [1920, 1080]
+    "9:16": [1080, 1920]
+  crf: 18
+  preset: medium
+  scene_pad: 0.35            # 장면 나레이션 뒤 여백(초)
+  end_fade: 0.6              # 마지막 페이드아웃(초)
+  progress_bar: false        # 최상단 진행률바: 사용하지 않음 (렌더러에 구현하지 않음)
+  end_screen_related_frame: false  # 마지막 화면 오른쪽 관련 영상 프레임: 사용하지 않음
+
+palette:
+  ink: [17, 20, 24]          # 기본 어두운 배경
+  paper: [246, 245, 241]     # 카드·밝은 배경
+  white: [255, 255, 255]
+  muted: [150, 156, 166]
+  accents:                   # 형식별 강조색 1개씩 고정 (원본 조합 회피)
+    bundle: [47, 107, 255]     # 코발트 블루
+    explainer: [198, 244, 50]  # 라임
+    info: [255, 196, 0]        # 앰버  (생활정보형)
+    interview: [255, 77, 94]   # 코랄 레드
+
+fonts:                       # scripts/setup_fonts.sh 로 내려받음 (모두 OFL 라이선스)
+  bold: fonts/Pretendard-Bold.otf
+  black: fonts/Pretendard-Black.otf
+  medium: fonts/Pretendard-Medium.otf
+  display: fonts/BlackHanSans-Regular.ttf   # 썸네일 대형 카피
+
+formats:                     # 분석 결과 기반 형식 4종
+  bundle:    {label: "묶음형",     accent: bundle,    target_sec: [480, 900], per_item_sec: [150, 240]}
+  explainer: {label: "해설형",     accent: explainer, target_sec: [180, 300]}
+  info:      {label: "생활정보형", accent: info,      target_sec: [90, 150]}
+  interview: {label: "대담형",     accent: interview, target_sec: [900, 1800]}
+
+subtitle:
+  burn_in: true
+  size: 58                   # 1080p 기준 px
+  max_chars: {"16:9": 20, "9:16": 14}   # 한 줄 최대 글자 수
+  max_lines: 2
+  min_cue_sec: 1.0
+  stroke: 6
+  box_opacity: 0.0           # 0이면 박스 없이 외곽선만, 0.5 정도면 반투명 박스
+  bottom_margin: {"16:9": 90, "9:16": 330}  # 9:16은 플랫폼 UI 회피용 하단 여백 크게
+
+layout:
+  margin: 110                # 좌우 여백(1080p 기준)
+  chapter_tag: true          # 좌상단 주제 태그
+  logo_watermark: true       # 우상단 작은 채널 표시
+  source_caption: true       # 출처 문구(자막 위 작은 글씨)
+
+motion:                      # 모든 이동은 가속·감속 곡선 사용 (linear 금지)
+  enter: {dur: 0.40, easing: out_cubic, dy: 40}
+  exit:  {dur: 0.25, easing: in_cubic}
+  move:  {easing: in_out_cubic}
+  count: {dur: 1.0, easing: out_quint}
+  kenburns: {scale: 1.08, easing: in_out_sine}
+  stagger: 0.12              # 여러 요소 순차 등장 간격
+  max_simultaneous: 2        # 동시에 움직이는 요소 최대 개수(check 에서 경고)
+
+tts:
+  provider: edge             # edge | google | file | silent
+  voice: ko-KR-SunHiNeural   # edge: ko-KR-SunHiNeural(여) / ko-KR-InJoonNeural(남), google: ko-KR-Neural2-A 등
+  target_spm: 350            # 목표 속도: 분당 음절 수 (분석 실측 평균)
+  tolerance: 0.10            # ±10% 벗어나면 atempo 로 보정
+  tempo_range: [0.88, 1.15]  # 보정 한계
+  pronunciation: {}          # 발음 사전 {"HUG": "허그"} — 자막은 원문, TTS만 치환
+
+audio:
+  bgm: null                  # 배경음악 경로(라이선스 확인된 것만). project.yaml 에서 지정
+  bgm_db: -20                # 나레이션 대비 BGM 볼륨
+  duck: true                 # 나레이션이 나올 때 BGM 자동 감쇄
+  loudness: -14              # 최종 LUFS (YouTube 기준)
+
+thumbnail:
+  size: [1280, 720]
+  rembg_model: isnet-general-use   # 누끼 모델. 인물 위주면 u2net_human_seg
+  outline: 8                 # 누끼 외곽 흰 테두리(px)
+  shadow: 18
+  line_size: [92, 104]       # 1줄, 2줄 글자 크기
+  max_line_chars: 12
+
+check:
+  caution_words: ["충격", "경악", "역대급", "무조건", "100%", "확정적", "소름"]
+  title_max: 50

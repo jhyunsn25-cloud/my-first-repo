@@ -1,0 +1,35 @@
+# 새 프로젝트 뼈대. 규칙은 ../video-preset.md 참고.
+meta:
+  title: ""                 # §11 제목 패턴. 채널명은 자동으로 붙음(묶음형 제외)
+  format: explainer         # bundle | explainer | info | interview
+  aspect: "16:9"            # "16:9" | "9:16"
+  basis_date: ""            # 정보 기준일 (YYYY-MM-DD)
+  summary: []               # 설명란 요약 2~3줄
+  hashtags: []
+  sponsored: null           # 협찬이면 "광고주명"
+
+overrides: {}               # preset.yaml 덮어쓰기 (channel, tts, audio 등)
+
+scenes:
+  # 훅 (첫 5초) — §4-2 훅 유형 중 하나
+  - id: s01
+    chapter: "오프닝"
+    narration: ""
+    bg: {color: ink}
+    visuals:
+      - {type: title, text: "", sub: "", at: 0.3}
+
+  # 본문 — 숫자·사실이 있으면 claims 필수
+  - id: s02
+    chapter: ""
+    narration: ""
+    claims: []
+    bg: {color: ink}
+    visuals: []
+    source: ""
+
+thumbnail:
+  backgrounds: []           # 1장=단일 / 2~4장=콜라주
+  subjects: []              # 주요 인물·피사체 (자동 누끼): - {src: assets/x.jpg, x: 0.75, height: 0.85}
+  label: null               # 대담형 코너명
+  lines: ["", ""]           # 1줄 흰색, 2줄 강조색, 각 12자 이하, 제목과 다른 문구

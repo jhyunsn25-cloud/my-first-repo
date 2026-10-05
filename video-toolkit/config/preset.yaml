@@ -65,12 +65,19 @@ motion:                      # 모든 이동은 가속·감속 곡선 사용 (li
   max_simultaneous: 2        # 동시에 움직이는 요소 최대 개수(check 에서 경고)
 
 tts:
-  provider: edge             # edge | google | file | silent
+  provider: edge             # typecast | edge | google | file | silent
   voice: ko-KR-SunHiNeural   # edge: ko-KR-SunHiNeural(여) / ko-KR-InJoonNeural(남), google: ko-KR-Neural2-A 등
   target_spm: 350            # 목표 속도: 분당 음절 수 (분석 실측 평균)
   tolerance: 0.10            # ±10% 벗어나면 atempo 로 보정
   tempo_range: [0.88, 1.15]  # 보정 한계
   pronunciation: {}          # 발음 사전 {"HUG": "허그"} — 자막은 원문, TTS만 치환
+  typecast:                  # provider: typecast 일 때 (API 키는 환경변수 TYPECAST_API_KEY)
+    voice_id: null           # tc_... 또는 내 커스텀 보이스 uc_...  → python make.py voices 로 찾기
+    model: ssfm-v30          # ssfm-v30(감정 7종 + smart) | ssfm-v21(빠름, 감정 4종)
+    emotion: smart           # smart(문맥으로 감정 자동, 앞뒤 장면 문장 전달) | preset | null
+    emotion_preset: normal   # preset 일 때: normal happy sad angry whisper toneup tonedown
+    emotion_intensity: 1.0   # 0.0~2.0
+    tempo: 1.0               # API 단계 속도(0.5~2.0). 350음절/분 보정은 이후 atempo 로 자동
 
 audio:
   bgm: null                  # 배경음악 경로(라이선스 확인된 것만). project.yaml 에서 지정

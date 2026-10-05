@@ -7,6 +7,8 @@
   python make.py thumb     <프로젝트폴더>
   python make.py publish   <프로젝트폴더>        # 제목·설명란·SRT 만 다시 생성
   python make.py all       <프로젝트폴더> [--preview] [--allow-unverified]
+  python make.py voices    [--gender female|male] [--model ssfm-v30]   # 타입캐스트 보이스 목록
+  python make.py typecast-info                                     # 타입캐스트 플랜·잔여 크레딧
 """
 import argparse
 import os
@@ -18,6 +20,7 @@ from vp import check as C
 from vp import publish as P
 from vp import render as R
 from vp import thumbnail as TH
+from vp import text as T
 from vp import tts as TTS
 from vp.config import Project
 
@@ -39,8 +42,11 @@ def do_check(p, allow):
 def do_tts(p):
     print("■ TTS")
     res = []
-    for sc in p.scenes:
-        path, d, spm = TTS.synth_scene(p, sc)
+    for i, sc in enumerate(p.scenes):
+        pron = p.cfg["tts"].get("pronunciation")
+        prev_t = T.tts_text(p.scenes[i - 1]["narration"], pron) if i > 0 else None
+        next_t = T.tts_text(p.scenes[i + 1]["narration"], pron) if i + 1 < len(p.scenes) else None
+        path, d, spm = TTS.synth_scene(p, sc, prev_text=prev_t, next_text=next_t)
         print(f"  {sc['id']}: {d:.1f}초, {spm:.0f}음절/분")
         res.append((path, d))
     return res
@@ -64,11 +70,28 @@ def do_render(p, preview):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("cmd", choices=["check", "tts", "render", "thumb", "publish", "all"])
-    ap.add_argument("project")
+    ap.add_argument("cmd", choices=["check", "tts", "render", "thumb", "publish", "all", "voices", "typecast-info"])
+    ap.add_argument("project", nargs="?")
+    ap.add_argument("--gender", choices=["female", "male"])
+    ap.add_argument("--model", default="ssfm-v30")
     ap.add_argument("--preview", action="store_true", help="절반 해상도·15fps 빠른 미리보기")
     ap.add_argument("--allow-unverified", action="store_true", help="검증 안 된 claim 을 경고로만 처리(미리보기 전용)")
     a = ap.parse_args()
+    if a.cmd == "voices":
+        params = {"model": a.model, **({"gender": a.gender} if a.gender else {})}
+        for v in TTS.typecast_request("GET", "/v2/voices", params=params):
+            emos = sorted({e for m in v.get("models", []) for e in m.get("emotions", [])})
+            print(f"{v['voice_id']}  {v.get('voice_name')}  {v.get('gender') or ''} {v.get('age') or ''}  "
+                  f"{','.join(v.get('use_cases') or [])}  감정:{','.join(emos)}")
+        return
+    if a.cmd == "typecast-info":
+        info = TTS.typecast_request("GET", "/v1/users/me/subscription")
+        c = info.get("credits", {})
+        print(f"플랜: {info.get('plan')}  크레딧: {c.get('used_credits')}/{c.get('plan_credits')} 사용  "
+              f"동시요청 한도: {info.get('limits', {}).get('concurrency_limit')}")
+        return
+    if not a.project:
+        ap.error("프로젝트 폴더를 지정하세요")
     p = Project(a.project)
     if a.cmd == "check":
         sys.exit(0 if do_check(p, a.allow_unverified) else 1)

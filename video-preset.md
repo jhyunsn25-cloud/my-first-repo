@@ -168,6 +168,7 @@ scenes:
 
 | provider | 용도 | 비고 |
 |---|---|---|
+| `typecast` | 구독 중인 타입캐스트 API | `TYPECAST_API_KEY`, `voice_id` 필요. `emotion: smart` 는 앞뒤 장면 문맥으로 감정 자동 선택. 뉴스 톤 고정은 `preset/normal`. 상업 이용 범위는 플랜 약관 확인 |
 | `edge` | 무료, 테스트·개인용 | 인터넷 필요. 음성 `ko-KR-SunHiNeural`(여), `ko-KR-InJoonNeural`(남). 비공식 서비스라 **상업 채널이면 약관 확인** 후 유료 TTS 권장 |
 | `google` | 상업 이용 | Google Cloud TTS, `ko-KR-Neural2-*` / Chirp3-HD 음성. 서비스 계정 키 필요 |
 | `file` | 직접 녹음 | `voice/<장면id>.wav` 를 넣으면 그대로 사용 (속도 보정 안 함) |

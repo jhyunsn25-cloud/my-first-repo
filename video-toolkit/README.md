@@ -85,10 +85,32 @@ overrides:
 
 | provider | 준비 |
 |---|---|
+| `typecast` | 아래 "타입캐스트" 참고 |
 | `edge` (기본) | 추가 준비 없음. 인터넷이 필요합니다. 무료 비공식 서비스이므로 **수익 채널에서 쓰기 전에 약관을 확인**하세요. |
 | `google` | `pip install google-cloud-texttospeech`, GCP에서 Text-to-Speech API 활성화, `export GOOGLE_APPLICATION_CREDENTIALS=키.json`. 음성 예: `ko-KR-Neural2-A/B/C`, `ko-KR-Chirp3-HD-*` |
 | `file` | 직접 녹음한 파일을 `my-project/voice/<장면id>.wav`(또는 mp3·m4a)로 넣습니다. |
 | `silent` | 무음. 화면·타이밍만 볼 때 씁니다. |
+
+### 타입캐스트
+1. API 키 발급: https://typecast.ai/developers/api
+   웹 편집기 구독과 API 이용(크레딧·요금)이 같은 플랜에 묶이는지는 계정마다 다를 수 있습니다. 아래 `typecast-info`로 확인하세요.
+2. 키 등록
+   - macOS·Linux: `export TYPECAST_API_KEY=발급받은키`
+   - Windows: `set TYPECAST_API_KEY=발급받은키`
+3. 플랜과 크레딧 확인: `python make.py typecast-info`
+4. 보이스 찾기: `python make.py voices --gender female` (`tc_...` ID가 출력됩니다. 내 커스텀 보이스는 `uc_...`)
+5. `project.yaml`에 다음을 적습니다.
+   ```yaml
+   overrides:
+     tts:
+       provider: typecast
+       typecast: {voice_id: tc_xxxxxxxx, model: ssfm-v30, emotion: smart}
+   ```
+- `emotion: smart`는 앞뒤 장면 문장을 함께 보내서 문맥에 맞는 감정을 자동으로 고릅니다. 뉴스 톤을 일정하게 유지하려면 `emotion: preset`, `emotion_preset: normal`로 바꾸세요.
+- 이미 합성한 장면은 캐시를 다시 쓰므로 크레딧이 다시 차감되지 않습니다. 문장이나 보이스 설정을 바꾼 장면만 다시 합성합니다.
+- 분당 350음절에서 크게 벗어나면 화면에 `tts.typecast.tempo` 추천값이 표시됩니다.
+- **API를 쓰지 않는 방법**: 타입캐스트 웹 편집기에서 장면별로 오디오를 내보내 `voice/s01.wav`, `voice/s02.wav` … 로 저장하고 `provider: file`을 쓰세요.
+- 상업적 이용(수익 창출 채널) 범위와 출처 표기 의무는 플랜마다 다르니 구독 중인 플랜의 이용 약관을 확인하세요.
 
 - 사내 프록시 환경에서 `edge`가 인증서 오류를 내면 프록시 CA를 신뢰하도록 설정하거나 `google` provider를 쓰세요.
 - 한국어 상업용 TTS로는 네이버 클로바 보이스(NCP)도 있습니다. 쓰려면 `vp/tts.py`에 같은 형태의 함수를 추가하면 됩니다.
